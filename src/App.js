@@ -1,56 +1,115 @@
-import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Button from 'react-bootstrap/Button';
-import { useSelector } from 'react-redux'
-import { Routes, Route, Link } from 'react-router-dom'
-import axios from 'axios';
+/* eslint-disable*/
 
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { NavDropdown } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Container from "./routes/Container.js";
+import Write from "./routes/Write.js";
+import Chat from "./routes/Chat.js";
+import Login from "./routes/Login.js";
+import Register from "./routes/Register.js";
+import Profile from "./routes/Profile.js";
+import { useState } from "react";
+
+import { LogOut } from "./store.js";
 
 function App() {
+  function GetData() {
+    axios.get("http://localhost:8080/add").then((result) => {
+      console.log(result.data);
+    });
+  }
 
-  let a = useSelector((state) => { return state })
-  console.log(a.user)
+  let state = useSelector((state) => {
+    return state;
+  });
+  // console.log(a.user)
 
   return (
-
     <div className="App">
-
       <ul className="nav justify-content-center">
+        <li className="nav-item" style={{ flexGrow: 2 }}></li>
         <li className="nav-item">
-          <Link className='nav-link' to="/">기본페이지</Link>
+          <Link className="nav-link" to="/">
+            Reactagram
+          </Link>
+        </li>
+        <li className="nav-item" style={{ flexGrow: 1 }}></li>
+        <li className="nav-item">
+          <Link className="nav-link" to="/">
+            Home
+          </Link>
         </li>
         <li className="nav-item">
-          <Link className='nav-link' to="/detail">상세페이지</Link>
+          <Link className="nav-link" to="/write">
+            Write
+          </Link>
         </li>
+        <li className="nav-item">
+          <Link className="nav-link" to="/chat">
+            Chat
+          </Link>
+        </li>
+        {state.login.isLoggedin === true ? (
+          <ProfileDropdown />
+        ) : (
+          <li className="nav-item">
+            <Link className="nav-link" to="/login">
+              Login
+            </Link>
+          </li>
+        )}
+
+        <li className="nav-item" style={{ flexGrow: 2 }}></li>
       </ul>
-      <div>hello</div>
-      <div>{a.user}</div>
-      <Button onClick={() => {
-        axios.get('http://localhost:8080/add').then((result) => {
-          console.log(result.data)
-        })
-      }} variant="primary">Primary</Button>
-
-
-
 
       <Routes>
-        <Route path="/" element={<div>기본페이지임</div>} />
-        <Route path="/detail" element={<Detail></Detail>} />
+        <Route path="/" element={<Container></Container>} />
+        <Route path="/write" element={<Write></Write>} />
+        <Route path="/chat" element={<Chat></Chat>} />
+        <Route path="/login" element={<Login></Login>} />
+        <Route path="/register" element={<Register></Register>} />
+        <Route path="/profile" element={<Profile></Profile>} />
         <Route path="*" element={<div>404</div>} />
       </Routes>
-
-
-
     </div>
   );
 }
 
-function Detail() {
-  return (
-    <div>상세페이지임</div>
-  )
+function ProfileDropdown() {
+  let dispatch = useDispatch();
+  let navigate = useNavigate();
 
+  return (
+    <div>
+      <NavDropdown title="User" id="basic-nav-dropdown">
+        <NavDropdown.Item
+          onClick={() => {
+            navigate("/profile");
+          }}
+        >
+          My Profile
+        </NavDropdown.Item>
+        <NavDropdown.Item>Edit Profile</NavDropdown.Item>
+        <NavDropdown.Divider />
+        <NavDropdown.Item
+          onClick={() => {
+            ProfileLogout();
+            navigate("/");
+          }}
+        >
+          Log Out
+        </NavDropdown.Item>
+      </NavDropdown>
+    </div>
+  );
+
+  function ProfileLogout() {
+    dispatch(LogOut());
+  }
 }
 
 export default App;

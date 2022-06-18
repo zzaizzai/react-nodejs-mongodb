@@ -37,11 +37,79 @@
   }
 }
 
-
 .nav {
   background-color: gainsboro;
 }
 .nav a {
   color: black;
   text-decoration: none;
+}
+
+.container-box {
+  /* background-color: gainsboro; */
+  width: 500px;
+  margin: auto;
+  padding: 5px;
+  padding-top: 1px;
+  margin-top: 20px;
+}
+
+.card-box {
+  padding: 10px;
+  background-color: #eee;
+  width: 90%;
+  margin: auto;
+  border-radius: 20px;
+  border: 1px solid grey;
+}
+
+.post-proifle {
+  width: 60px;
+  height: 60px;
+  background-image: url("https://placeimg.com/640/480/people");
+  background-size: cover;
+  border-radius: 100px;
+}
+
+.post-likes {
+  background-image: url("./../public/images/heart.svg");
+  background-size: cover;
+  width: 30px;
+  height: 30px;
+  transition: 0.2s;
+}
+
+.liked {
+  background-image: url("./../public/images/heart.liked.svg");
+  transition: 0.3s;
+}
+.post-chat {
+  background-image: url("./../public/images/mail.svg");
+  background-size: cover;
+  width: 30px;
+  height: 30px;
+}
+
+.pointer:hover {
+  cursor: pointer !important;
+}
+
+.nav-dropdown{
+  height: 20px;
+  width: 20px;
+}
+
+.profile-box{
+  background-color: gray;
+  width: 400px;
+  margin: auto;
+}
+
+
+.profile-url {
+  background-color: black;
+  width: 80px;
+  height: 80px;
+  border-radius: 100px;
+
 }

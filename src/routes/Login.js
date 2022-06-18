@@ -2,13 +2,28 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { LogIn } from "./../store.js";
+import { isLoggedinTrue, SetUserData } from "./../store.js";
+import axios from "axios";
 
 function Login() {
   let dispatch = useDispatch();
   let navigate = useNavigate();
-  let [ID, setID] = useState("test");
+  let [inputId, setinputId] = useState("test");
   let [password, setPassword] = useState("password");
+
+  function LoginAccount() {
+    let id = inputId;
+    let pw = password;
+
+    axios.post("http://localhost:8080/login", { id, pw }).then((result) => {
+      //   console.log(result.data.user);
+      dispatch(isLoggedinTrue());
+      dispatch(SetUserData(result.data.user));
+      sessionStorage.setItem("user", JSON.stringify(result.data));
+      console.log("logged in");
+      navigate("/");
+    });
+  }
 
   return (
     <div>
@@ -18,30 +33,23 @@ function Login() {
             className="my-2 p-1"
             type="text"
             placeholder="ID"
-            value={ID}
-            onChange=
-            {(e) => {
-                setID(e.target.value);
-              }}
+            value={inputId}
+            onChange={(e) => {
+              setinputId(e.target.value);
+            }}
           />
           <input
             className="my-2 p-1"
             type="password"
             placeholder="Password"
             value={password}
-            onChange=
-            {(e) => {
-                setPassword(e.target.value);
-              }}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
           />
           <button
             onClick={() => {
-              let user = {
-                password: password,
-                ID: ID,
-              };
-              dispatch(LogIn(user));
-              navigate("/");
+              LoginAccount();
             }}
             className="my-2  btn btn-primary"
           >

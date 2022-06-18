@@ -12,11 +12,21 @@ import Chat from "./routes/Chat.js";
 import Login from "./routes/Login.js";
 import Register from "./routes/Register.js";
 import Profile from "./routes/Profile.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { LogOut } from "./store.js";
+import { isLoggedinFalse, SetUserData, isLoggedinTrue } from "./store.js";
 
 function App() {
+  let dispatch = useDispatch();
+
+  useEffect(() => {
+    const userData = JSON.parse(sessionStorage.getItem("user"));
+    if (userData !== null) {
+      dispatch(SetUserData(userData.user));
+      dispatch(isLoggedinTrue());
+    }
+  });
+
   function GetData() {
     axios.get("http://localhost:8080/add").then((result) => {
       console.log(result.data);
@@ -72,7 +82,7 @@ function App() {
         <Route path="/chat" element={<Chat></Chat>} />
         <Route path="/login" element={<Login></Login>} />
         <Route path="/register" element={<Register></Register>} />
-        <Route path="/profile" element={<Profile></Profile>} />
+        <Route path="/profile/:id" element={<Profile></Profile>} />
         <Route path="*" element={<div>404</div>} />
       </Routes>
     </div>
@@ -82,13 +92,15 @@ function App() {
 function ProfileDropdown() {
   let dispatch = useDispatch();
   let navigate = useNavigate();
-
+  let state = useSelector((state) => {
+    return state;
+  });
   return (
     <div>
       <NavDropdown title="User" id="basic-nav-dropdown">
         <NavDropdown.Item
           onClick={() => {
-            navigate("/profile");
+            navigate(`/profile/${state.user.ID}`);
           }}
         >
           My Profile
@@ -98,7 +110,6 @@ function ProfileDropdown() {
         <NavDropdown.Item
           onClick={() => {
             ProfileLogout();
-            navigate("/");
           }}
         >
           Log Out
@@ -108,7 +119,9 @@ function ProfileDropdown() {
   );
 
   function ProfileLogout() {
-    dispatch(LogOut());
+    dispatch(isLoggedinFalse());
+    sessionStorage.removeItem("user");
+    navigate("/");
   }
 }
 

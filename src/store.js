@@ -1,4 +1,5 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
 let login = createSlice({
   name: "login",
@@ -6,28 +7,39 @@ let login = createSlice({
     isLoggedin: false,
   },
   reducers: {
-    LogIn(state, user) {
+    isLoggedinTrue(state) {
       state.isLoggedin = true;
-      console.log(user.payload)
     },
-    LogOut(state) {
+    isLoggedinFalse(state) {
       state.isLoggedin = false;
     },
   },
 });
 
-export let { LogIn, LogOut } = login.actions;
+export let { isLoggedinTrue, isLoggedinFalse } = login.actions;
 
 let user = createSlice({
   name: "user",
   initialState: {
     _id: "0",
     displaName: "test",
-    ID: "test",
+    id: "test",
     profileUrl: "https://placeimg.com/640/480/tech",
     role: "normal",
   },
+  reducers:{
+    SetUserData(state, user){
+      // console.log(user.payload)
+      state._id = user.payload._id
+      state.displaName = user.payload.name
+      state.content = user.payload.content
+      state.profileUrl = user.payload.profileUrl
+      state.id = user.payload.id
+    }
+  }
 });
+
+export let {SetUserData} = user.actions
 
 let posts = createSlice({
   name: "posts",

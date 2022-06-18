@@ -11,7 +11,7 @@ npm start
 
 Node.js:   
 ```
-npm install   
 cd server   
+npm install   
 nodemon server.js   
 ```

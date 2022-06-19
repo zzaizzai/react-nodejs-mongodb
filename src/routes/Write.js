@@ -1,5 +1,5 @@
 /* eslint-disable*/
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { UploadPost } from "./../store.js";
@@ -8,9 +8,15 @@ import axios from "axios";
 function Write() {
   let dispatch = useDispatch();
   let navigate = useNavigate();
+  let state = useSelector((state) => state);
 
   let [content, setContent] = useState("");
-
+  useEffect(() => {
+    const userData = JSON.parse(sessionStorage.getItem("user"));
+    if (userData == null) {
+      navigate("/login");
+    }
+  });
 
   return (
     <div>
@@ -30,16 +36,36 @@ function Write() {
       <button
         className="btn btn-success"
         onClick={() => {
-          if (content.length > 0) {
-            dispatch(UploadPost(content));
-            navigate("/");
-          }
+          NewPost();
         }}
       >
         upload
       </button>
     </div>
   );
+  function NewPost() {
+    if (content.length > 0) {
+     
+      let newPost = {
+        authorName: state.user.displaName,
+        authorID: state.user.id,
+        author_id: state.user._id,
+        authoProfileUrl: "https://placeimg.com/640/480/tech",
+        content: content,
+        contentImageUrl: "none",
+      };
+      axios
+        .post("http://localhost:8080/addpost", { post: newPost })
+        .then((result) => {
+        //   console.log(result.data.newPost);
+        //   dispatch(UploadPost(result.data.newPost));
+          navigate("/");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }
 }
 
 export default Write;

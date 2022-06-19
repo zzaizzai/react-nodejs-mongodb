@@ -18,6 +18,8 @@ import { isLoggedinFalse, SetUserData, isLoggedinTrue } from "./store.js";
 
 function App() {
   let dispatch = useDispatch();
+  let navigate = useNavigate();
+  
 
   useEffect(() => {
     const userData = JSON.parse(sessionStorage.getItem("user"));
@@ -83,7 +85,14 @@ function App() {
         <Route path="/login" element={<Login></Login>} />
         <Route path="/register" element={<Register></Register>} />
         <Route path="/profile/:id" element={<Profile></Profile>} />
-        <Route path="*" element={<div>404</div>} />
+        <Route
+          path="*"
+          element={
+            <div>
+              <img src="/images/404.jpg" className="image404 mt-5" />
+            </div>
+          }
+        />
       </Routes>
     </div>
   );
@@ -105,7 +114,16 @@ function ProfileDropdown() {
         >
           My Profile
         </NavDropdown.Item>
-        <NavDropdown.Item>Edit Profile</NavDropdown.Item>
+        <NavDropdown.Item>
+          <div className="d-flex align-items-center">
+            <img
+              className="nav-profile-icon "
+              src="/images/setting.svg"
+              alt="icon"
+            />
+            Edit Profile
+          </div>
+        </NavDropdown.Item>
         <NavDropdown.Divider />
         <NavDropdown.Item
           onClick={() => {

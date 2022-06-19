@@ -132,6 +132,39 @@ app.post("/register", function (req, res) {
   });
 });
 
+app.post("/addpost", function (req, res) {
+  let newPost = {
+    authorName: req.body.post.authorName,
+    authorID: req.body.post.authorID,
+    author_id: req.body.post.author_id,
+    authoProfileUrl: req.body.post.authoProfileUrl,
+    content: req.body.post.content,
+    contentImageUrl: req.body.post.contentImageUrl,
+
+    date: new Date(),
+    likes: 0,
+    liked: false,
+    followed_id: [],
+  };
+  console.log(newPost);
+  db.collection("posts").insertOne(newPost, function (error, result) {
+    res.json({ newPost: newPost });
+  });
+});
+
+app.get("/getposts/skip=:skip", function (req, res) {
+  db.collection("posts")
+    .find()
+    .limit(3)
+    .skip(parseInt(req.params.skip))
+    .sort({ date: -1 })
+    .toArray(function (error, result) {
+      // console.log(result);
+      // console.log(req.params.start);
+      res.json({ posts: result });
+    });
+});
+
 app.use(express.static(path.join(__dirname, "./../build")));
 
 app.get("/", function (req, res) {

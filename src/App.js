@@ -12,6 +12,7 @@ import Chat from "./routes/Chat.js";
 import Login from "./routes/Login.js";
 import Register from "./routes/Register.js";
 import Profile from "./routes/Profile.js";
+import EditProfile from "./routes/EditProfile.js";
 import { useEffect, useState } from "react";
 
 import { isLoggedinFalse, SetUserData, isLoggedinTrue } from "./store.js";
@@ -19,7 +20,7 @@ import { isLoggedinFalse, SetUserData, isLoggedinTrue } from "./store.js";
 function App() {
   let dispatch = useDispatch();
   let navigate = useNavigate();
-  
+
 
   useEffect(() => {
     const userData = JSON.parse(sessionStorage.getItem("user"));
@@ -85,6 +86,7 @@ function App() {
         <Route path="/login" element={<Login></Login>} />
         <Route path="/register" element={<Register></Register>} />
         <Route path="/profile/:id" element={<Profile></Profile>} />
+        <Route path="/edit/profile" element={<EditProfile></EditProfile>} />
         <Route
           path="*"
           element={
@@ -106,15 +108,22 @@ function ProfileDropdown() {
   });
   return (
     <div>
-      <NavDropdown title="User" id="basic-nav-dropdown">
+      <NavDropdown title="User " id="basic-nav-dropdown">
         <NavDropdown.Item
           onClick={() => {
-            navigate(`/profile/${state.user.ID}`);
+            navigate(`/profile/${state.user.id}`);
           }}
-        >
-          My Profile
+        > <div>
+            <img className="nav-profile-icon "
+              src="/images/profile.svg"
+              alt="icon" />
+            My Profile
+          </div>
+
         </NavDropdown.Item>
-        <NavDropdown.Item>
+        <NavDropdown.Item onClick={() => {
+          navigate('/edit/profile');
+        }}>
           <div className="d-flex align-items-center">
             <img
               className="nav-profile-icon "

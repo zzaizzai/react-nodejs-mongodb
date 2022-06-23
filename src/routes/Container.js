@@ -12,7 +12,8 @@ function Container() {
     axios
       .get(`http://localhost:8080/getposts/skip=${postCount}`)
       .then((result) => {
-        //   console.log(result.data);
+
+        //console.log(result.data);
         dispatch(FetchPosts(result.data));
       });
     return () => {
@@ -37,9 +38,7 @@ function Container() {
         <Card></Card>
         <button className="btn btn-danger"
           onClick={() => {
-            {
-              setPostCount(postCount + postIncrease);
-            }
+            setPostCount(postCount + postIncrease);
           }}
         >
           Show More

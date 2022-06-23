@@ -165,6 +165,14 @@ app.get("/getposts/skip=:skip", function (req, res) {
     });
 });
 
+app.get('/getprofile/id=:id', function(req, res){
+  db.collection('users').findOne({id: req.params.id}, function(error, result){
+    delete result['pw']
+    res.json({profile: result})
+  })
+
+})
+
 app.use(express.static(path.join(__dirname, "./../build")));
 
 app.get("/", function (req, res) {

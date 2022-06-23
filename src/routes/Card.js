@@ -1,17 +1,22 @@
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { LikeThisPost } from "./../store.js";
 
 function Card() {
   let state = useSelector((state) => state);
   let dispatch = useDispatch();
+  let navigate = useNavigate();
+
 
   return (
-    <div>
+    <div>ß
       {state.posts.map((item, i) => (
         <div key={i} className="card-box my-3">
           <div className="d-flex flex-row align-items-center bd-highlight">
-            <img src={item.authoProfileUrl} className="post-proifle mx-2" />
-            <h5 className="p-3">
+            <img src={item.authoProfileUrl} className="post-proifle mx-2" alt="profile" />
+            <h5 className="p-3" onClick={() => {
+              navigate(`/profile/${item.authorID}`);
+            }}>
               {item.authorName} ({item.authorID}){" "}
             </h5>
           </div>

@@ -7,16 +7,23 @@ function Card() {
   let dispatch = useDispatch();
   let navigate = useNavigate();
 
-
   return (
     <div>
       {state.posts.map((item, i) => (
         <div key={i} className="card-box my-3">
           <div className="d-flex flex-row align-items-center bd-highlight">
-            <img src={item.authoProfileUrl} className="post-proifle mx-2" alt="profile" />
-            <h5 className="p-3" onClick={() => {
-              navigate(`/profile/${item.authorID}`);
-            }}>
+            <img
+              src={item.authoProfileUrl}
+              className="post-proifle mx-2"
+              alt="profile"
+              onError={(e) => (e.target.src = "/images/profile.svg")}
+            />
+            <h5
+              className="p-3"
+              onClick={() => {
+                navigate(`/profile/${item.authorID}`);
+              }}
+            >
               {item.authorName} ({item.authorID}){" "}
             </h5>
           </div>

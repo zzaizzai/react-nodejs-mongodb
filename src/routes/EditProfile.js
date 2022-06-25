@@ -15,6 +15,7 @@ function Profile() {
   let [newName, setNewName] = useState("");
   let [newProfileUrl, setNewProfileUrl] = useState("");
   let [newContent, setNewContent] = useState("");
+  let [radio, setRadio] = useState("11");
   let [displayImageChoice, setDisplayImageChoice] = useState(true);
 
   useEffect(() => {
@@ -63,62 +64,83 @@ function Profile() {
             }}
           />
           <button
-            className="edit-size btn btn-danger m-2"
+            className="edit-size btn btn-success m-2"
             onClick={ChangeProfile}
           >
-            send
+            Eidt
           </button>
-          {/* <ChoiceImage></ChoiceImage> */}
+        </div>
+        <div className="mt-5">
+          Chose one place img<ChoiceImages></ChoiceImages>
         </div>
       </div>
     </div>
   );
 
-  function ChoiceImage() {
+  function ChoiceImages() {
     return (
       <div className="container">
-        <div className="d-inline-flex justify-content-cente flex-column">
+        <div className="d-inline-flex justify-content-center flex-column m-2">
           <img
             className="image-choice"
             src="https://placeimg.com/640/480/tech"
             alt=""
+            onClick={() => {
+              ChoiceProfileImage("https://placeimg.com/640/480/tech");
+            }}
           />
           tech
         </div>
-        <div className="d-inline-flex flex-column">
+        <div className="d-inline-flex flex-column m-2">
           <img
             className="image-choice"
             src="https://placeimg.com/640/480/people"
             alt=""
+            onClick={() => {
+              ChoiceProfileImage("https://placeimg.com/640/480/people");
+            }}
           />
           people
         </div>
-        <div className="d-inline-flex flex-column">
+        <div className="d-inline-flex flex-column m-2">
           <img
             className="image-choice"
             src="https://placeimg.com/640/480/nature"
             alt=""
+            onClick={() => {
+              ChoiceProfileImage("https://placeimg.com/640/480/nature");
+            }}
           />
           nature
         </div>
-        <div className="d-inline-flex flex-column">
+        <div className="d-inline-flex flex-column m-2">
           <img
             className="image-choice"
             src="https://placeimg.com/640/480/arch"
             alt=""
+            onClick={() => {
+              ChoiceProfileImage("https://placeimg.com/640/480/arch");
+            }}
           />
           arch
         </div>
-        <div className="d-inline-flex flex-column">
+        <div className="d-inline-flex flex-column m-2">
           <img
             className="image-choice"
             src="https://placeimg.com/640/480/animals"
             alt=""
+            onClick={() => {
+              ChoiceProfileImage("https://placeimg.com/640/480/animals");
+            }}
           />
           animals
         </div>
       </div>
     );
+  }
+
+  function ChoiceProfileImage(url) {
+    setNewProfileUrl(url);
   }
 
   function ChangeProfile() {

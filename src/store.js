@@ -25,6 +25,7 @@ let user = createSlice({
     displayName: "test",
     id: "test",
     profileUrl: "https://placeimg.com/640/480/tech",
+    joinDate: '',
     role: "normal",
   },
   reducers: {
@@ -33,6 +34,7 @@ let user = createSlice({
       state._id = user.payload._id;
       state.displayName = user.payload.name;
       state.content = user.payload.content;
+      state.joinDate = user.payload.joinDate;
       state.profileUrl = user.payload.profileUrl;
       state.id = user.payload.id;
     },

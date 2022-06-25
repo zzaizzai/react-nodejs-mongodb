@@ -165,13 +165,44 @@ app.get("/getposts/skip=:skip", function (req, res) {
     });
 });
 
-app.get('/getprofile/id=:id', function(req, res){
-  db.collection('users').findOne({id: req.params.id}, function(error, result){
-    delete result['pw']
-    res.json({profile: result})
-  })
+app.get("/getprofile/id=:id", function (req, res) {
+  db.collection("users").findOne(
+    { id: req.params.id },
+    function (error, result) {
+      delete result["pw"];
+      res.json({ profile: result });
+    }
+  );
+});
 
-})
+app.post("/changeprofile", function (req, res) {
+  db.collection("users").updateOne(
+    { _id: ObjectId(req.body.newProfile._id) },
+    {
+      $set: {
+        name: req.body.newProfile.name,
+        profileUrl: req.body.newProfile.profileUrl,
+        content: req.body.newProfile.content,
+      },
+    }
+  ),
+    function (error, result) {};
+  db.collection("posts").updateMany(
+    { author_id: req.body.newProfile._id },
+    {
+      $set: {
+        authorName: req.body.newProfile.name,
+        authoProfileUrl: req.body.newProfile.profileUrl,
+      },
+    },
+    function (error, result) {
+      console.log(result);
+    }
+  );
+
+  let user = req.body.newProfile;
+  res.json({ user: user });
+});
 
 app.use(express.static(path.join(__dirname, "./../build")));
 

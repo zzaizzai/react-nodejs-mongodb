@@ -192,3 +192,14 @@
 .chatroom-who {
   margin: 0px;
 }
+
+.edit-size {
+  width: 200px;
+}
+
+.image-choice {
+  width: 150px;
+  height: 150px;
+  border-radius: 200px;
+
+}

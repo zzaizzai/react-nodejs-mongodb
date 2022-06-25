@@ -9,7 +9,7 @@ function Card() {
 
 
   return (
-    <div>ß
+    <div>
       {state.posts.map((item, i) => (
         <div key={i} className="card-box my-3">
           <div className="d-flex flex-row align-items-center bd-highlight">

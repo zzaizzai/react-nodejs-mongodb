@@ -47,7 +47,7 @@ function Write() {
     if (content.length > 0) {
      
       let newPost = {
-        authorName: state.user.displaName,
+        authorName: state.user.displayName,
         authorID: state.user.id,
         author_id: state.user._id,
         authoProfileUrl: "https://placeimg.com/640/480/tech",

@@ -22,7 +22,7 @@ let user = createSlice({
   name: "user",
   initialState: {
     _id: "0",
-    displaName: "test",
+    displayName: "test",
     id: "test",
     profileUrl: "https://placeimg.com/640/480/tech",
     role: "normal",
@@ -31,7 +31,7 @@ let user = createSlice({
     SetUserData(state, user) {
       // console.log(user.payload)
       state._id = user.payload._id;
-      state.displaName = user.payload.name;
+      state.displayName = user.payload.name;
       state.content = user.payload.content;
       state.profileUrl = user.payload.profileUrl;
       state.id = user.payload.id;

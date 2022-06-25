@@ -88,7 +88,9 @@ app.post(
         id: req.user.id,
         content: req.user.content,
         profileUrl: req.user.profileUrl,
+        joinDate: req.user.joinDate,
         role: req.user.role,
+        
       };
       res.json({ user: user });
     });

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
   let [id, setId] = useState("test");
@@ -7,6 +8,7 @@ function Register() {
   let [passwordCheck, setPasswordCheck] = useState("password");
   let [name, setName] = useState("");
   let [content, setContent] = useState("");
+  let navigate = useNavigate();
 
   function CheckAccountAndCreateNewOne() {
     let newUser = {
@@ -14,13 +16,14 @@ function Register() {
       id: id,
       pw: password,
       content: content,
-      profileUrl: "",
+      profileUrl: "https://placeimg.com/640/480/tech",
     };
     console.log(newUser);
     axios
       .post("http://localhost:8080/register", { newUser: newUser })
       .then((result) => {
         console.log(result.data);
+        navigate("/");
       });
   }
 

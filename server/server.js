@@ -90,7 +90,6 @@ app.post(
         profileUrl: req.user.profileUrl,
         joinDate: req.user.joinDate,
         role: req.user.role,
-        
       };
       res.json({ user: user });
     });
@@ -204,6 +203,59 @@ app.post("/changeprofile", function (req, res) {
 
   let user = req.body.newProfile;
   res.json({ user: user });
+});
+
+app.post("/likethispost", function (req, res) {
+  if (req.body.user._id === "0") {
+    res.json("do login");
+    return;
+  }
+  console.log(req.body);
+  if (req.body.post.liked === false) {
+    newlike = {
+      post_id: req.body.post._id,
+      user_id: req.body.user._id,
+      userName: req.body.user.displayName,
+      userId: req.body.user.id,
+      date: new Date(),
+    };
+    console.log(req.body.user);
+    console.log(newlike);
+    db.collection("posts")
+      .updateOne({ _id: ObjectId(req.body.post._id) }, { $inc: { likes: 1 } })
+      .then(() => {
+        db.collection("likes").insertOne(newlike, function (error, result) {
+          console.log(result);
+        });
+      });
+    console.log("likes + 1");
+    res.json("i love this");
+  } else {
+    db.collection("posts")
+      .updateOne({ _id: ObjectId(req.body.post._id) }, { $inc: { likes: -1 } })
+      .then(() => {
+        db.collection("likes").deleteMany({
+          $and: [
+            { post_id: req.body.post._id },
+            { user_id: req.body.user._id },
+          ],
+        });
+      });
+    console.log("likes - 1");
+    res.json("i dont love this");
+  }
+});
+
+app.post("/getmylikes", function (req, res) {
+  console.log(req.body.user);
+  db.collection("likes")
+    .find({ user_id: req.body.user._id })
+    .toArray()
+    .then((result) => {
+      console.log(result);
+      res.json({ liked: result });
+    });
+  // console.log(req.body.user);
 });
 
 app.use(express.static(path.join(__dirname, "./../build")));

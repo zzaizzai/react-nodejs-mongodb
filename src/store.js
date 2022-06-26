@@ -25,7 +25,7 @@ let user = createSlice({
     displayName: "test",
     id: "test",
     profileUrl: "https://placeimg.com/640/480/tech",
-    joinDate: '',
+    joinDate: "",
     role: "normal",
   },
   reducers: {
@@ -78,6 +78,11 @@ let posts = createSlice({
       state.splice(0, state.length);
     },
     LikeThisPost(state, index) {
+      if (state[index.payload].liked === false) {
+        state[index.payload].likes += 1;
+      } else if (state[index.payload].liked === true) {
+        state[index.payload].likes -= 1;
+      }
       state[index.payload].liked = !state[index.payload].liked;
     },
     UploadPost(state, newPost) {
@@ -95,10 +100,18 @@ let posts = createSlice({
         });
       }
     },
+    FetchLikes(state, index) {
+      // console.log(index.payload);
+      if (index.payload != -1) {
+        state[index.payload].liked  = true
+      }
+
+    },
   },
 });
 
-export let { UploadPost, LikeThisPost, FetchPosts, ClearPosts } = posts.actions;
+export let { UploadPost, LikeThisPost, FetchPosts, ClearPosts, FetchLikes } =
+  posts.actions;
 
 export default configureStore({
   reducer: {

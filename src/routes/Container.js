@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FetchPosts, ClearPosts, FetchLikes } from "./../store.js";
+import { AddLikedData } from "./../store.js";
 import Card from "./Card.js";
 
 function Container() {
@@ -12,30 +13,21 @@ function Container() {
     return state;
   });
 
-  let [likedPosts, setLikedPosts] = useState([
-    // {
-    //   _id: "000",
-    //   post_id: "000",
-    //   userId: "test",
-    //   userName: "james",
-    //   user_id: "62adff5b980565d6cad0b954",
-    //   _id: "62b79e75cae1f599c0ad2eb6",
-    // },
-  ]);
-
   //Check liked when it mounted
   useEffect(() => {
-    likedPosts.forEach((element) => {
+    
+    state.likedPosts.forEach((element) => {
       var likedPostIndex = state.posts.findIndex(
         (v) => v._id === element.post_id
       );
       dispatch(FetchLikes(likedPostIndex));
+      
     });
-  }, [likedPosts]);
+  }, [state.likedPosts]);
 
   //Check liked when posts updated
   useEffect(() => {
-    likedPosts.forEach((element) => {
+    state.likedPosts.forEach((element) => {
       var likedPostIndex = state.posts.findIndex(
         (v) => v._id === element.post_id
       );
@@ -50,13 +42,11 @@ function Container() {
     axios
       .post("http://localhost:8080/getmylikes", { user: state.user })
       .then((result) => {
-        let newLikedPosts = [...likedPosts];
+        // console.log(result.data)
         result.data.liked.forEach((element) => {
-          // console.log(element)
-          newLikedPosts.push(element);
-          setLikedPosts(newLikedPosts);
+          dispatch(AddLikedData(element));
+          console.log(state.likedPosts)
         });
-        console.log("dd");
       });
   }, [state.user._id]);
 

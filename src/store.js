@@ -18,6 +18,29 @@ let login = createSlice({
 
 export let { isLoggedinTrue, isLoggedinFalse } = login.actions;
 
+let likedPosts = createSlice({
+  name: "likedPosts",
+  initialState: [],
+  reducers: {
+    AddLikedData(state, likedPost) {
+      // console.log(likedPost.payload);
+      state.push(likedPost.payload);
+    },
+    ChangeLikedDatainStore(state, post) {
+      if (post.payload != -1) {
+        console.log(post.payload)
+        state.splice(post.payload, 1)
+      } else {
+        console.log(post.payload)
+
+      }
+
+    }
+  },
+});
+
+export let { AddLikedData, ChangeLikedDatainStore } = likedPosts.actions;
+
 let user = createSlice({
   name: "user",
   initialState: {
@@ -80,10 +103,11 @@ let posts = createSlice({
     LikeThisPost(state, index) {
       if (state[index.payload].liked === false) {
         state[index.payload].likes += 1;
+        state[index.payload].liked = true;
       } else if (state[index.payload].liked === true) {
         state[index.payload].likes -= 1;
+        state[index.payload].liked = false;
       }
-      state[index.payload].liked = !state[index.payload].liked;
     },
     UploadPost(state, newPost) {
       // console.log(newPost.payload);
@@ -103,9 +127,8 @@ let posts = createSlice({
     FetchLikes(state, index) {
       // console.log(index.payload);
       if (index.payload != -1) {
-        state[index.payload].liked  = true
+        state[index.payload].liked = true;
       }
-
     },
   },
 });
@@ -118,5 +141,6 @@ export default configureStore({
     user: user.reducer,
     posts: posts.reducer,
     login: login.reducer,
+    likedPosts: likedPosts.reducer
   },
 });

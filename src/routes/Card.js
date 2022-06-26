@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { LikeThisPost } from "./../store.js";
+import { LikeThisPost, ChangeLikedDatainStore } from "./../store.js";
 
 function Card() {
   let state = useSelector((state) => state);
@@ -36,6 +36,7 @@ function Card() {
               <div
                 className="post-likes liked mx-2 pointer"
                 onClick={() => {
+                  ChangeLikedData(item);
                   dispatch(LikeThisPost(i));
                   axios
                     .post("http://localhost:8080/likethispost", {
@@ -51,6 +52,7 @@ function Card() {
               <div
                 className="post-likes mx-2 pointer"
                 onClick={() => {
+                  ChangeLikedData(item);
                   dispatch(LikeThisPost(i));
                   axios
                     .post("http://localhost:8080/likethispost", {
@@ -69,6 +71,13 @@ function Card() {
       ))}
     </div>
   );
+  function ChangeLikedData(item) {
+    console.log(item);
+    console.log(state.likedPosts)
+    let targetIndex = state.likedPosts.findIndex( v=> v.post_id === item._id)
+    console.log(targetIndex)
+    dispatch(ChangeLikedDatainStore(targetIndex))
+  }
 }
 
 export default Card;

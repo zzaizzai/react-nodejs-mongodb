@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { LikeThisPost } from "./../store.js";
@@ -36,6 +37,14 @@ function Card() {
                 className="post-likes liked mx-2 pointer"
                 onClick={() => {
                   dispatch(LikeThisPost(i));
+                  axios
+                    .post("http://localhost:8080/likethispost", {
+                      post: item,
+                      user: state.user,
+                    })
+                    .then((result) => {
+                      console.log(result.data);
+                    });
                 }}
               />
             ) : (
@@ -43,6 +52,14 @@ function Card() {
                 className="post-likes mx-2 pointer"
                 onClick={() => {
                   dispatch(LikeThisPost(i));
+                  axios
+                    .post("http://localhost:8080/likethispost", {
+                      post: item,
+                      user: state.user,
+                    })
+                    .then((result) => {
+                      console.log(result.data);
+                    });
                 }}
               />
             )}

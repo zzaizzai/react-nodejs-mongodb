@@ -1,6 +1,20 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+let chatroom = createSlice({
+  name: "chatroom",
+  initialState: {
+    currentChatroom: "0",
+  },
+  reducers: {
+    setCurrentChatroom(state, chatroom) {
+      state.currentChatroom = chatroom.payload._id;
+    },
+  },
+});
+
+export let { setCurrentChatroom } = chatroom.actions;
+
 let login = createSlice({
   name: "login",
   initialState: {
@@ -28,14 +42,12 @@ let likedPosts = createSlice({
     },
     ChangeLikedDatainStore(state, post) {
       if (post.payload != -1) {
-        console.log(post.payload)
-        state.splice(post.payload, 1)
+        console.log(post.payload);
+        state.splice(post.payload, 1);
       } else {
-        console.log(post.payload)
-
+        console.log(post.payload);
       }
-
-    }
+    },
   },
 });
 
@@ -141,6 +153,7 @@ export default configureStore({
     user: user.reducer,
     posts: posts.reducer,
     login: login.reducer,
-    likedPosts: likedPosts.reducer
+    likedPosts: likedPosts.reducer,
+    chatroom: chatroom.reducer,
   },
 });

@@ -15,12 +15,15 @@ function Card() {
           <div className="d-flex flex-row align-items-center bd-highlight">
             <img
               src={item.authoProfileUrl}
-              className="post-proifle mx-2"
+              className="post-proifle mx-2 cursur"
               alt="profile"
               onError={(e) => (e.target.src = "/images/profile.svg")}
+              onClick={() => {
+                navigate(`/profile/${item.authorID}`);
+              }}
             />
             <h5
-              className="p-3"
+              className="p-3 cursur"
               onClick={() => {
                 navigate(`/profile/${item.authorID}`);
               }}
@@ -36,6 +39,10 @@ function Card() {
               <div
                 className="post-likes liked mx-2 pointer"
                 onClick={() => {
+                  if (state.login.isLoggedin === false) {
+                    console.log("please login");
+                    return;
+                  }
                   ChangeLikedData(item);
                   dispatch(LikeThisPost(i));
                   axios
@@ -52,6 +59,10 @@ function Card() {
               <div
                 className="post-likes mx-2 pointer"
                 onClick={() => {
+                  if (state.login.isLoggedin === false) {
+                    console.log("please login");
+                    return;
+                  }
                   ChangeLikedData(item);
                   dispatch(LikeThisPost(i));
                   axios
@@ -73,10 +84,10 @@ function Card() {
   );
   function ChangeLikedData(item) {
     console.log(item);
-    console.log(state.likedPosts)
-    let targetIndex = state.likedPosts.findIndex( v=> v.post_id === item._id)
-    console.log(targetIndex)
-    dispatch(ChangeLikedDatainStore(targetIndex))
+    console.log(state.likedPosts);
+    let targetIndex = state.likedPosts.findIndex((v) => v.post_id === item._id);
+    console.log(targetIndex);
+    dispatch(ChangeLikedDatainStore(targetIndex));
   }
 }
 

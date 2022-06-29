@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentChatroom } from "./../store.js";
 
 function Chat() {
   let state = useSelector((state) => state);
+  let dispatch = useDispatch();
+  let [height] = useState(window.innerHeight);
   let navigate = useNavigate();
+  let [messageContent, setMessageContent] = useState("");
   let [messages, setMessages] = useState([
     {
       _id: "0",
@@ -54,20 +58,43 @@ function Chat() {
   return (
     <div>
       <div className="container p-4 mt-5">
+        {height}
         <div className="row">
           <div className="col-3">
             <ul className="list-group chat-list">
               <li className="list-group-item">
-                <h6></h6>
+                <h6>current Chat _id: {state.chatroom.currentChatroom}</h6>
               </li>
 
               {chatrooms.map((chatroom, i) => (
                 <div key={i}>
-                  <li className="list-group-item chat-list-box">
-                    <h6 className="chatroom-who">{chatroom.whoUid}</h6>
-                    <p className="chatroom-recent">{chatroom.recentMessage}</p>
-                    <p className="chatroom-time">{chatroom.latestDate}</p>
-                  </li>
+                  {state.chatroom.currentChatroom == chatroom._id ? (
+                    <li
+                      onClick={() => {
+                        ChoiceCurrentChatroom(chatroom);
+                      }}
+                      className="list-group-item chat-list-box activechat"
+                    >
+                      <h6 className="chatroom-who">_id: {chatroom._id}</h6>
+                      <p className="chatroom-recent">
+                        {chatroom.recentMessage}
+                      </p>
+                      <p className="chatroom-time">{chatroom.latestDate}</p>
+                    </li>
+                  ) : (
+                    <li
+                      onClick={() => {
+                        ChoiceCurrentChatroom(chatroom);
+                      }}
+                      className="list-group-item chat-list-box"
+                    >
+                      <h6 className="chatroom-who">_id: {chatroom._id}</h6>
+                      <p className="chatroom-recent">
+                        {chatroom.recentMessage}
+                      </p>
+                      <p className="chatroom-time">{chatroom.latestDate}</p>
+                    </li>
+                  )}
                 </div>
               ))}
 
@@ -125,8 +152,22 @@ function Chat() {
                 </li> */}
               </ul>
               <div className="input-group">
-                <input className="form-control" id="chat-input" />
-                <button className="btn btn-secondary">send</button>
+                <input
+                  value={messageContent}
+                  onChange={(e) => {
+                    setMessageContent(e.target.value);
+                  }}
+                  className="form-control"
+                  id="chat-input"
+                />
+                <button
+                  onClick={() => {
+                    SendMessage(messageContent);
+                  }}
+                  className="btn btn-secondary"
+                >
+                  send
+                </button>
               </div>
               <div className="down-button">▽</div>
             </div>
@@ -135,6 +176,30 @@ function Chat() {
       </div>
     </div>
   );
+
+  function ChoiceCurrentChatroom(chatroom) {
+    dispatch(setCurrentChatroom(chatroom));
+  }
+
+  function SendMessage(newMessageContent) {
+    if (newMessageContent == "") {
+      console.log("input message content");
+      return;
+    }
+    let newMessages = [...messages];
+    let newMessage = {
+      _id: "0",
+      parent_id: state.chatroom.currentChatroom,
+      sender_id: state.user._id,
+      senderId: state.user.id,
+      senderName: state.user.displayName,
+      content: newMessageContent,
+      date: "2022-2-2",
+    };
+    newMessages.push(newMessage);
+    setMessages(newMessages);
+    setMessageContent("");
+  }
 }
 
 export default Chat;

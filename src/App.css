@@ -202,5 +202,13 @@
   height: 150px;
   border-radius: 200px;
   cursor: pointer;
+}
 
+.cursur:hover{
+  cursor: pointer;
+}
+
+.activechat {
+  background: rgba(0, 0, 0, 0.185) !important;
+  border-color: rgba(0, 0, 0, 0.185) !important;
 }

@@ -258,6 +258,60 @@ app.post("/getmylikes", function (req, res) {
   // console.log(req.body.user);
 });
 
+app.post("/chatrooms", function (req, res) {
+  db.collection("chatrooms")
+    .find({ who_id: req.body.user._id })
+    .toArray()
+    .then((result) => {
+      res.json({ chatrooms: result });
+    });
+});
+
+app.post("/getmessages", function (req, res) {
+  console.log(req.body.user);
+  console.log(req.body.chatroom_id);
+  db.collection("messages")
+    .find({ chatroom_id: req.body.chatroom_id })
+    .toArray()
+    .then((result) => {
+      console.log(result);
+      res.json({ targetMessages: result });
+    });
+});
+
+app.post("/sendmessage", function (req, res) {
+  console.log(req.body.newMessage);
+  db.collection("messages")
+    .insertOne(req.body.newMessage)
+    .then((result) => {
+      console.log(result);
+    });
+});
+
+app.post("/checkchatroomandcreateone", function (req, res) {
+  // console.log(req.body.post);
+  // console.log(req.body.user);
+  if (req.body.user._id !== req.body.post.author_id) {
+    db.collection("chatrooms")
+      .findOne({ who_id: req.body.user._id, who_id: req.body.post.author_id })
+      .then((result) => {
+        console.log(result);
+        res.json({ chatroom: result });
+      });
+  }
+
+  // let newChatroom = {
+  //   who_id: [req.body.post.author_id, req.body.user._id],
+  //   // whoName:  [req.body.post.authorName, req.body.user._id],
+  //   date: new Date(),
+  //   latestDate: new Date(),
+  //   self: false,
+  // };
+  // db.collection('chatrooms').insertOne(newChatroom, function (error, result) {
+  //   console.log(result);
+  // });
+});
+
 app.use(express.static(path.join(__dirname, "./../build")));
 
 app.get("/", function (req, res) {

@@ -3,6 +3,7 @@ import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentChatroom } from "./../store.js";
+import { dblClick } from "@testing-library/user-event/dist/click.js";
 
 function Chat() {
   let state = useSelector((state) => state);
@@ -11,24 +12,24 @@ function Chat() {
   let navigate = useNavigate();
   let [messageContent, setMessageContent] = useState("");
   let [messages, setMessages] = useState([
-    {
-      _id: "0",
-      parent_id: "1",
-      sender_id: "62adff5b980565d6cad0b954",
-      senderId: "test",
-      senderName: "dd",
-      content: "me",
-      date: "2022-2-2",
-    },
-    {
-      _id: "0",
-      parent_id: "1",
-      sender_id: "62adff5b980565",
-      senderId: "test",
-      senderName: "dd",
-      content: "you",
-      date: "2022-2-2",
-    },
+    // {
+    //   _id: "0",
+    //   parent_id: "1",
+    //   sender_id: "62adff5b980565d6cad0b954",
+    //   senderId: "test",
+    //   senderName: "dd",
+    //   content: "me",
+    //   date: "2022-2-2",
+    // },
+    // {
+    //   _id: "0",
+    //   parent_id: "1",
+    //   sender_id: "62adff5b980565",
+    //   senderId: "test",
+    //   senderName: "dd",
+    //   content: "you",
+    //   date: "2022-2-2",
+    // },
   ]);
   let [chatrooms, setChatrooms] = useState([
     {
@@ -50,11 +51,34 @@ function Chat() {
   ]);
 
   useEffect(() => {
+    axios
+      .post("http://localhost:8080/chatrooms", { user: state.user })
+      .then((result) => {
+        console.log(result.data.chatrooms);
+        setChatrooms(result.data.chatrooms);
+      });
+  }, []);
+
+  useEffect(() => {
     const userData = JSON.parse(sessionStorage.getItem("user"));
     if (userData == null) {
       navigate("/login");
     }
   });
+
+  useEffect(() => {
+    // console.log(state.chatroom.currentChatroom)
+    axios
+      .post("http://localhost:8080/getmessages", {
+        user: state.user,
+        chatroom_id: state.chatroom.currentChatroom,
+      })
+      .then((result) => {
+        setMessages(result.data.targetMessages);
+        console.log(result.data.targetMessages);
+      });
+  }, [state.chatroom.currentChatroom]);
+
   return (
     <div>
       <div className="container p-4 mt-5">
@@ -116,7 +140,7 @@ function Chat() {
                         <div className="row">
                           <div>
                             <span className="chat-date text-small minedate">
-                              {message.date}
+                              {/* {message.date} */}
                             </span>
                           </div>
                           <div>
@@ -129,7 +153,7 @@ function Chat() {
                         <div className="row">
                           <div>
                             <span className="chat-date text-small">
-                              {message.date}
+                              {/* {message.date} */}
                             </span>
                           </div>
                           <div>
@@ -188,17 +212,37 @@ function Chat() {
     }
     let newMessages = [...messages];
     let newMessage = {
-      _id: "0",
-      parent_id: state.chatroom.currentChatroom,
+      chatroom_id: state.chatroom.currentChatroom,
       sender_id: state.user._id,
       senderId: state.user.id,
       senderName: state.user.displayName,
       content: newMessageContent,
-      date: "2022-2-2",
+      date: new Date(),
     };
     newMessages.push(newMessage);
     setMessages(newMessages);
     setMessageContent("");
+    axios
+      .post("http://localhost:8080/sendmessage", { newMessage: newMessage })
+      .then((result) => {
+        console.log(result);
+      });
+  }
+
+  //dosent work
+  function FetchMessageDate() {
+    let dateChanged = [];
+    if (messages.length > 0) {
+      let messagesDate = [...messages];
+      messagesDate.forEach((element) => {
+        element.date =
+          new Date(element.date).toLocaleDateString() +
+          "" +
+          new Date(element.date).toLocaleTimeString();
+        dateChanged.push(element);
+      });
+      setMessages(dateChanged);
+    }
   }
 }
 

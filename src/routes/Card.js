@@ -1,7 +1,12 @@
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { LikeThisPost, ChangeLikedDatainStore } from "./../store.js";
+import {
+  LikeThisPost,
+  ChangeLikedDatainStore,
+  CheckChatroomAndCreateOne,
+  setCurrentChatroom
+} from "./../store.js";
 
 function Card() {
   let state = useSelector((state) => state);
@@ -33,8 +38,13 @@ function Card() {
           </div>
           <div>{item.content}</div>
           <div>{item.date}</div>
-          <div className="d-flex">
-            <div className="post-chat mx-2 pointer"></div>
+          <div className="d-flex flex-row">
+            <div
+              onClick={() => {
+                ChatRoom(item);
+              }}
+              className="post-chat mx-2 pointer"
+            ></div>
             {item.liked === true ? (
               <div
                 className="post-likes liked mx-2 pointer"
@@ -76,7 +86,8 @@ function Card() {
                 }}
               />
             )}
-            {item.likes}
+            <div>{item.likes}</div>
+            <div className="ms-auto mx-2 px-2">...</div>
           </div>
         </div>
       ))}
@@ -88,6 +99,18 @@ function Card() {
     let targetIndex = state.likedPosts.findIndex((v) => v.post_id === item._id);
     console.log(targetIndex);
     dispatch(ChangeLikedDatainStore(targetIndex));
+  }
+
+  function ChatRoom(post) {
+    axios
+      .post("http://localhost:8080/checkchatroomandcreateone", {
+        post: post,
+        user: state.user,
+      })
+      .then((result) => {
+        console.log(result.data.chatroom);
+        dispatch(setCurrentChatroom(result.data.chatroom))
+      });
   }
 }
 

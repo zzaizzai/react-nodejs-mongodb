@@ -2,8 +2,13 @@ import { useEffect, useState } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { setCurrentChatroom } from "./../store.js";
-import { dblClick } from "@testing-library/user-event/dist/click.js";
+import {
+  setCurrentChatroom,
+  setMessagesInChatroom,
+  ClearMessages,
+  setChatroomsInStore,
+} from "./../store.js";
+import { io } from "socket.io-client";
 
 function Chat() {
   let state = useSelector((state) => state);
@@ -32,22 +37,22 @@ function Chat() {
     // },
   ]);
   let [chatrooms, setChatrooms] = useState([
-    {
-      _id: "0",
-      whoUid: ["0", "2"],
-      who: ["admin", "Kims"],
-      startDate: "22 - 5 - 20",
-      latestDate: "22 - 5 - 30",
-      recentMessage: "hello",
-    },
-    {
-      _id: "1",
-      whoUid: ["0", "3"],
-      who: ["admin", "Elaski"],
-      startDate: " 22 - 5 - 21",
-      latestDate: "22 - 5 - 31",
-      recentMessage: "hello",
-    },
+    // {
+    //   _id: "0",
+    //   whoUid: ["0", "2"],
+    //   who: ["admin", "Kims"],
+    //   startDate: "22 - 5 - 20",
+    //   latestDate: "22 - 5 - 30",
+    //   recentMessage: "hello",
+    // },
+    // {
+    //   _id: "1",
+    //   whoUid: ["0", "3"],
+    //   who: ["admin", "Elaski"],
+    //   startDate: " 22 - 5 - 21",
+    //   latestDate: "22 - 5 - 31",
+    //   recentMessage: "hello",
+    // },
   ]);
 
   useEffect(() => {
@@ -56,6 +61,12 @@ function Chat() {
       .then((result) => {
         console.log(result.data.chatrooms);
         setChatrooms(result.data.chatrooms);
+        dispatch(setChatroomsInStore(result.data.chatrooms));
+
+        //join chatrooms whose the name is element_id
+        result.data.chatrooms.forEach((element) => {
+          socket.emit("JOIN_ROOM", element);
+        });
       });
   }, []);
 
@@ -74,10 +85,27 @@ function Chat() {
         chatroom_id: state.chatroom.currentChatroom,
       })
       .then((result) => {
-        setMessages(result.data.targetMessages);
-        console.log(result.data.targetMessages);
+        // setMessages(result.data.targetMessages);
+        dispatch(ClearMessages());
+        dispatch(setMessagesInChatroom(result.data.targetMessages));
       });
   }, [state.chatroom.currentChatroom]);
+
+  let socket = null;
+  socket = io("http://127.0.0.1:8080");
+
+  useEffect(() => {
+    socket.on("ROOM_MESSAGE", (message) => {
+      // console.log(state.chatroom.currentChatroom);
+      console.log(message.chatroom_id);
+      // FetchMessagesFromSocket();
+      let aaa = [message];
+      dispatch(setMessagesInChatroom(aaa));
+    });
+    // return () => {
+    //   socket.disconnect();
+    // };
+  });
 
   return (
     <div>
@@ -90,7 +118,7 @@ function Chat() {
                 <h6>current Chat _id: {state.chatroom.currentChatroom}</h6>
               </li>
 
-              {chatrooms.map((chatroom, i) => (
+              {state.chatroom.chatrooms.map((chatroom, i) => (
                 <div key={i}>
                   {state.chatroom.currentChatroom == chatroom._id ? (
                     <li
@@ -99,7 +127,8 @@ function Chat() {
                       }}
                       className="list-group-item chat-list-box activechat"
                     >
-                      <h6 className="chatroom-who">_id: {chatroom._id}</h6>
+                      {/* <h6 className="chatroom-who">{chatroom.whoName[0]}</h6> */}
+                      <h6 className="chatroom-time">_id: {chatroom._id}</h6>
                       <p className="chatroom-recent">
                         {chatroom.recentMessage}
                       </p>
@@ -112,7 +141,8 @@ function Chat() {
                       }}
                       className="list-group-item chat-list-box"
                     >
-                      <h6 className="chatroom-who">_id: {chatroom._id}</h6>
+                      {/* <h6 className="chatroom-who">{chatroom.whoName[0]}</h6> */}
+                      <h6 className="chatroom-time">_id: {chatroom._id}</h6>
                       <p className="chatroom-recent">
                         {chatroom.recentMessage}
                       </p>
@@ -133,7 +163,7 @@ function Chat() {
             <div className="chat-room">
               <div></div>
               <ul className="list-group chat-content">
-                {messages.map((message, i) => (
+                {state.chatroom.messages.map((message, i) => (
                   <div key={i}>
                     <li>
                       {message.sender_id === state.user._id ? (
@@ -210,7 +240,6 @@ function Chat() {
       console.log("input message content");
       return;
     }
-    let newMessages = [...messages];
     let newMessage = {
       chatroom_id: state.chatroom.currentChatroom,
       sender_id: state.user._id,
@@ -219,9 +248,10 @@ function Chat() {
       content: newMessageContent,
       date: new Date(),
     };
-    newMessages.push(newMessage);
-    setMessages(newMessages);
     setMessageContent("");
+    console.log(messages);
+    socket.emit("ROOM_SEND", newMessage);
+    console.log(messages);
     axios
       .post("http://localhost:8080/sendmessage", { newMessage: newMessage })
       .then((result) => {
@@ -229,20 +259,8 @@ function Chat() {
       });
   }
 
-  //dosent work
-  function FetchMessageDate() {
-    let dateChanged = [];
-    if (messages.length > 0) {
-      let messagesDate = [...messages];
-      messagesDate.forEach((element) => {
-        element.date =
-          new Date(element.date).toLocaleDateString() +
-          "" +
-          new Date(element.date).toLocaleTimeString();
-        dateChanged.push(element);
-      });
-      setMessages(dateChanged);
-    }
+  function FetchMessagesFromSocket() {
+    console.log(state.chatroom.currentChatroom);
   }
 }
 

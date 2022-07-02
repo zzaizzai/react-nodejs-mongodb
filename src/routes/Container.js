@@ -15,13 +15,11 @@ function Container() {
 
   //Check liked when it mounted
   useEffect(() => {
-    
     state.likedPosts.forEach((element) => {
       var likedPostIndex = state.posts.findIndex(
         (v) => v._id === element.post_id
       );
       dispatch(FetchLikes(likedPostIndex));
-      
     });
   }, [state.likedPosts]);
 
@@ -42,10 +40,10 @@ function Container() {
     axios
       .post("http://localhost:8080/getmylikes", { user: state.user })
       .then((result) => {
-        dispatch(ClearLikedData())
+        dispatch(ClearLikedData());
         result.data.liked.forEach((element) => {
           dispatch(AddLikedData(element));
-          console.log(state.likedPosts)
+          console.log(state.likedPosts);
         });
       });
   }, [state.user._id]);

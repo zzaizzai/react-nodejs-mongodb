@@ -10,6 +10,19 @@ app.use(cors());
 const flash = require("connect-flash");
 app.use(flash());
 
+const { Server } = require("socket.io");
+const http = require("http");
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    transports: ["websocket", "polling"],
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+  allowEIO3: true,
+});
+
 //connect mongoDB
 const MongoClient = require("mongodb").MongoClient;
 MongoClient.connect(
@@ -20,7 +33,9 @@ MongoClient.connect(
       return console.log(error);
     }
     db = client.db("react");
-    console.log("connected mongoDB");
+    server.listen(8080, function () {
+      console.log("listening on 8080");
+    });
   }
 );
 
@@ -268,29 +283,49 @@ app.post("/chatrooms", function (req, res) {
 });
 
 app.post("/getmessages", function (req, res) {
-  console.log(req.body.user);
-  console.log(req.body.chatroom_id);
+  // console.log(req.body.user);
+  // console.log(req.body.chatroom_id);
   db.collection("messages")
     .find({ chatroom_id: req.body.chatroom_id })
     .toArray()
     .then((result) => {
-      console.log(result);
+      // console.log(result);
       res.json({ targetMessages: result });
     });
 });
 
 app.post("/sendmessage", function (req, res) {
-  console.log(req.body.newMessage);
+  // console.log(req.body.newMessage);
   db.collection("messages")
     .insertOne(req.body.newMessage)
     .then((result) => {
-      console.log(result);
+      console.log("sended a message");
+      // console.log(result);
     });
 });
 
+io.on("connection", (socket) => {
+  // console.log('soket on')
+  socket.on("JOIN_ROOM", (chatroom) => {
+    console.log("joined chatroom");
+    console.log(chatroom._id);
+    socket.join(chatroom._id);
+  });
+
+  socket.on("DISCONNET", () => {
+    console.log("connection closed");
+  });
+
+  socket.on("ROOM_SEND", (message) => {
+    console.log("emitted a message");
+    console.log(message);
+    io.to(message.chatroom_id).emit("ROOM_MESSAGE", message);
+  });
+});
+
 app.post("/checkchatroomandcreateone", function (req, res) {
-  // console.log(req.body.post);
-  // console.log(req.body.user);
+  console.log(req.body.post);
+  console.log(req.body.user);
   if (req.body.user._id !== req.body.post.author_id) {
     db.collection("chatrooms")
       .findOne({ who_id: req.body.user._id, who_id: req.body.post.author_id })
@@ -302,7 +337,7 @@ app.post("/checkchatroomandcreateone", function (req, res) {
 
   // let newChatroom = {
   //   who_id: [req.body.post.author_id, req.body.user._id],
-  //   // whoName:  [req.body.post.authorName, req.body.user._id],
+  //   whoName:  [req.body.post.authorName, req.body.user._id],
   //   date: new Date(),
   //   latestDate: new Date(),
   //   self: false,
@@ -320,8 +355,4 @@ app.get("/", function (req, res) {
 
 app.get("*", function (req, res) {
   res.sendFile(path.join(__dirname, "./../build/index.html"));
-});
-
-app.listen(8080, function () {
-  console.log("listening on 8080");
 });

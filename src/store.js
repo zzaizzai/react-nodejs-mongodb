@@ -5,15 +5,67 @@ let chatroom = createSlice({
   name: "chatroom",
   initialState: {
     currentChatroom: "0",
+    chatrooms: [
+      {
+        _id: "0",
+        whoUid: ["0", "2"],
+        who: ["admin", "Kims"],
+        startDate: "22 - 5 - 20",
+        latestDate: "22 - 5 - 30",
+        recentMessage: "hello",
+      },
+      {
+        _id: "1",
+        whoUid: ["0", "3"],
+        who: ["admin", "Elaski"],
+        startDate: " 22 - 5 - 21",
+        latestDate: "22 - 5 - 31",
+        recentMessage: "hello",
+      },
+    ],
+    messages: [],
   },
+
   reducers: {
     setCurrentChatroom(state, chatroom) {
       state.currentChatroom = chatroom.payload._id;
     },
+    setMessagesInChatroom(state, messages) {
+      if (state.currentChatroom == "0") {
+        return;
+      }
+
+      if (messages.payload[0].chatroom_id !== state.currentChatroom) {
+        return;
+      }
+
+      if (messages.payload.length > 1) {
+        messages.payload.forEach((ee) => {
+          state.messages.push(ee);
+        });
+      } else if (messages.payload.length == 1) {
+        state.messages.push(messages.payload[0]);
+      }
+    },
+    ClearMessages(state) {
+      state.messages.splice(0, state.messages.length);
+    },
+    setChatroomsInStore(state, chatrooms) {
+      // console.log(chatrooms.payload);
+      state.chatrooms.splice(0, state.chatrooms.length);
+      chatrooms.payload.forEach((ee) => {
+        state.chatrooms.push(ee);
+      });
+    },
   },
 });
 
-export let { setCurrentChatroom, CheckChatroomAndCreateOne } = chatroom.actions;
+export let {
+  setCurrentChatroom,
+  setMessagesInChatroom,
+  ClearMessages,
+  setChatroomsInStore,
+} = chatroom.actions;
 
 let login = createSlice({
   name: "login",

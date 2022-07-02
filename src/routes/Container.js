@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FetchPosts, ClearPosts, FetchLikes } from "./../store.js";
-import { AddLikedData } from "./../store.js";
+import { AddLikedData, ClearLikedData } from "./../store.js";
 import Card from "./Card.js";
 
 function Container() {
@@ -42,7 +42,7 @@ function Container() {
     axios
       .post("http://localhost:8080/getmylikes", { user: state.user })
       .then((result) => {
-        // console.log(result.data)
+        dispatch(ClearLikedData())
         result.data.liked.forEach((element) => {
           dispatch(AddLikedData(element));
           console.log(state.likedPosts)

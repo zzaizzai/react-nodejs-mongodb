@@ -13,7 +13,7 @@ let chatroom = createSlice({
   },
 });
 
-export let { setCurrentChatroom } = chatroom.actions;
+export let { setCurrentChatroom, CheckChatroomAndCreateOne } = chatroom.actions;
 
 let login = createSlice({
   name: "login",
@@ -41,17 +41,22 @@ let likedPosts = createSlice({
       state.push(likedPost.payload);
     },
     ChangeLikedDatainStore(state, post) {
-      if (post.payload != -1) {
+      if (post.payload !== -1) {
         console.log(post.payload);
         state.splice(post.payload, 1);
       } else {
         console.log(post.payload);
       }
     },
+    ClearLikedData(state) {
+      state.splice(0, state.length);
+      console.log("clear");
+    },
   },
 });
 
-export let { AddLikedData, ChangeLikedDatainStore } = likedPosts.actions;
+export let { AddLikedData, ChangeLikedDatainStore, ClearLikedData } =
+  likedPosts.actions;
 
 let user = createSlice({
   name: "user",
@@ -138,7 +143,7 @@ let posts = createSlice({
     },
     FetchLikes(state, index) {
       // console.log(index.payload);
-      if (index.payload != -1) {
+      if (index.payload !== -1) {
         state[index.payload].liked = true;
       }
     },
